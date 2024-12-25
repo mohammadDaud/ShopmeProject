@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Category | Shopme Admin','none')" />
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+		<div class="text-center">
+			<h2>[[${pageTitle}]]</h2>
+		</div>
+		<form th:action="@{/brands/savebrand}" method="post"
+			style="max-width: 500px; margin: 0 auto;" th:object="${brand}"
+			enctype="multipart/form-data"
+			onsubmit="return checkNameUnique(this);">
+			<input type="hidden" th:field="*{id}">
+			<div class="border border-secondary rounded p-3">
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Brand Name</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" th:field="*{name}"
+							required minlength="3" maxlength="128" />
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Logo</label>
+					<div class="col-sm-8">
+						<input type="hidden" th:field="*{logo}"> <input
+							type="file" id="fileImage" name="fileImage"
+							accept="image/png,image/jpeg" class="mb-2"
+							th:required="${brand.id == null}" />
+						<div class="mt-2">
+							<img alt="preview"
+								style="height: 65%; width: 25%; border-radius: 50%"
+								class="img-thumbnail" id="thumbnail"
+								th:src="@{${brand.logoPath}}" />
+						</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Select one or more
+						Categories</label>
+					<div class="col-sm-8">
+						<select class="form-control" th:field="*{categories}" multiple
+							required style="resize: vertical; height: 200px">
+							<th:bolck th:each="cat : ${listCategories}">
+								<option th:value="${cat.id}">[[${cat.name}]]</option>
+							</th:bolck>
+						</select>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="col-sm-4 col-form-label">Chosen Categories</label>
+					<div class="col-sm-8">
+						<div id="chosenCategories"></div>
+					</div>
+				</div>
+				<div class="text-center">
+					<input type="submit" value="save" class="btn btn-primary m-3">
+					<input type="button" value="cancel" class="btn btn-secondary"
+						id="btnCancel">
+				</div>
+			</div>
+		</form>
+		<div th:replace="modal_fragments :: modal_dialogs"></div>
+		<div th:replace="fragments :: footer"></div>
+	</div>
+	<script type="text/javascript">
+		ModalUrl = "[[@{/brands/check_unique}]]";
+		$(document).ready(function() {
+			category = $("#categories");
+			chosen = $("#chosenCategories");
+			category.change(function() {
+				chosen.empty();
+				showChosenCategories();
+			});
+			showChosenCategories();
+		});
+		function showChosenCategories() {
+			category
+					.children("option:selected")
+					.each(
+							function() {
+								selectedCategory = $(this);
+								catId = selectedCategory.val();
+								catName = selectedCategory.text().replace(/-/g,
+										"");
+								chosen
+										.append("<span class='badge badge-secondary m-1'>"
+												+ catName + "</span>")
+							});
+		}
+
+		function checkNameUnique(form) {
+			brandId = $("#id").val();
+			brandName = $("#name").val();
+
+			csrfValue = $("input[name='_csrf']").val();
+			url = ModalUrl;
+			param = {
+				id : brandId,
+				name : brandName,
+				_csrf : csrfValue
+			};
+			$.post( url,
+					param,
+					function(response) {
+								if (response == "OK") {
+									form.submit();
+								} else if (response == "DuplicateName") {
+									showWarningModal("there is another brand having same name."
+											+ brandName);
+								} else {
+									showErrorModal("Unknown response from the server.");
+								}
+							}).fail(function() {
+						showErrorModal("could not connect to the server.");
+					});
+			return false;
+		}
+
+		function showModal(title, message) {
+			$("#modalTitle").text(title);
+			$("#modalBody").text(message);
+			$("#modalDialog").modal();
+		}
+		function showErrorModal(message) {
+			showModal("Error", message);
+		}
+		function showWarningModal(message) {
+			showModal("Warning", message);
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Please do the needful to implement following functionality, write required JUnit test cases and share code by tomorrow morning 9am.  
+
+NOTE : We have a session from 9am to 1pm tomorrow to complete Core Java.
+
+1. Move Initialization code from Application to JUnit Test cases and remove App
+2. Implement required functionality and write following test cases with required assertions :
+2.1 : Ensure id and name are set for objects of Floor, Section and Slot
+2.2 : Ensure mobile number of customer is of 10 digits.
+2.3 : Ensure Ticket object set set with valid Slot and Vehicle objects i.e., Slot & vehicle objects should be in respective master data maps. And slot is available.
+2.4 : Ensure from and to time of Ticket is from the past and from time is less than to time
+2.5 : Calculate amount to be paid for the the ticket based on Customer type and if vehicle was charged while it was parked in the slot.
+2.6 : Ensure amount in Payment is correct based on the data in the ticket.
+2.7 : Ensure Admin cannot disable all slots in the building.
+2.8 : Ensure Admin can access to customer's mobile number to call customer of specific vehicle.
+2.9 : Ensure all the slots in the floor are disabled if a specific floor is disabled by Admin.

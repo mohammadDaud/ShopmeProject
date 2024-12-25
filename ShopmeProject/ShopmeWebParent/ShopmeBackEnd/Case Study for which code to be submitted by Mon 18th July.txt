@@ -1,0 +1,39 @@
+REQUIREMENTS :
+1. Create Customer Registration form which will accept following attributes for the customer :
+customer name (min 10 characters, max 100), age (>18), email (valid email), mobile number (equal to 10 digits), Salary (greater than >0), gender (Male | Female),  userName, password, confirm Password. 
+1.1 Customer Id should be generated using Customer Sequence.
+1.2 Should be accessible anonymously
+1.3 Both passwords should match and should be between 8 to 15 characters.
+
+2. Create a User Administration page which displays list of users and helps is maintaining user details through dialog boxes for add / update and delete.  Similar to the sample discussed during theory.  Properties of User will include :
+2.1 User class would include attributes Customer Id if user is of role Customer.
+2.2 If user not customer then User's name, username, password  and Email should be entered by Admin while creating user.
+2.3 Customer Id should be existing customer Id, if the user has role customer.
+2.4 User Id should be generated using User Sequence.
+2.5 User Admin Page Should be accessible only by Admin.
+2.6 User roles can be Admin, Customer or Branch Manager.
+
+3. Branch Manager should be able to Open (Create) Accounts for a customer(s) after logging in 
+3.1 Base Account will have attributes customer Id, account Type (Saving | Commercial | Private), cure balance (float), status (Active | Dormant | Closed).
+3.2 Account Id should be generated using Account Sequence.
+3.3 Customer Id should be existing customer Id 
+3.4 Branch Manager can open multiple account for single customer but of different
+3.5 Web Page should allow Manager to create, update status of account(s) for a given account id.
+3.6 Commercial account will have additional attributes like Office Address of type (Address), Business Type (Self | Private | Public), Total Revenue in lakhs (float)
+3.7 Private Account will have  addition attributes total Wealth (float), Wealth unit (Lakhs | Crores) 
+
+4. Allow Customer to perform following Transactions on their account(s) after loggin in : 
+4.1 Transaction will have attrbutes auto generated transaction id, account id, transaction type (Credit | Debit), transaction amount (float) and time of transaction should be curent time.
+4.2 Account id should belong to the customer.
+4.3 Display current balance on screen.
+4.5 If the transaction is Credit then add transaction amount to current balance.
+4.6 If the transaction is Debit then subtract transaction amount from current balance.
+4.7 Customer should be able to view list of transactions for all accounts or a specific account in a page which displays a table with columns transactin id, Account id, Account Type, date of Transaction, amount of Transaction, and transaction type.
+
+5. Crate a Login page and allow user perform only actions as per the roles of logged in user. And provide a Logout.
+
+
+
+
+
+https://www.youtube.com/watch?v=hLtI_sashW0

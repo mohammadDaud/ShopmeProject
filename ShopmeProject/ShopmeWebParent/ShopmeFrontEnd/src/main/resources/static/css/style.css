@@ -1,0 +1,23 @@
+*.icon-white{color: white;}
+*.icon-gray{color: gray;}
+*.icon-silver{color: silver;}
+*.icon-green{color: green;}
+*.icon-teal{color: teal;}
+*.icon-red{color: red;}
+
+@media screen and (max-width : 768px){
+	/* small Screen */
+	div.details{display: none};
+	div.less-screen{display: block;}
+}
+
+@media screen and (min-width : 768px) and (max-width :1024px){
+	/* medium Screen */
+	div.details{display: block;};
+	div.less-screen{display: none;}
+}
+
+@media screen and (min-width : 1024px){
+	/* big Screen */
+	div.less-screen{display: none;}
+}

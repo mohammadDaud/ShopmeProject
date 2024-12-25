@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('ProductList | Shopme Admin','none')" />
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+		<div class="pt-2 mb-5">
+			<p>
+				<span class="h2 pr-2">Manage Products</span> &nbsp;|&nbsp;
+				<th:block sec:authorize="hasAnyAuthority('Admin','Editors')">
+					<a class="btn btn-link" th:href="@{/products/newproduct}">ADD
+						new Product</a> &nbsp;|&nbsp; <a class="btn btn-link"
+						th:href="@{/products/export/csv}">Export to CSV</a>
+				</th:block>
+			</p>
+		</div>
+		<div th:if="${message !=null}" class="alert alert-success text-center">
+			[[${message}]]</div>
+		<div class="details">
+			<table class="table table-striped table-condensed">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">Product ID</th>
+						<th scope="col">Product Image</th>
+						<th scope="col">Product Name</th>
+						<th scope="col">Brand</th>
+						<th scope="col">Category</th>
+						<th:block sec:authorize="hasAnyAuthority('Admin','Editors')">
+						<th scope="col">Enabled</th>
+						</th:block>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="product : ${listProducts}">
+						<th scope="row">[[${product.id}]]</th>
+						<td><img alt="" th:src="@{${product.mainImagePath}}"
+							style="height: 40px; width: 40px; border-radius: 10%"></td>
+						<td><a th:href="@{'/products/view/'+${product.id}}"
+							class="link-details" title="View Details of this product">
+								[[${product.name}]] </a></td>
+						<td><th:block th:each="brd : ${product.brand}">
+								[[${brd.name}]]
+							</th:block></td>
+						<td><th:block th:each="cat : ${product.category}">
+								[[${cat.name}]]
+							</th:block></td>
+						
+						<th:block sec:authorize="hasAnyAuthority('Admin','Editors')">
+							<td>
+								<a th:href="@{'/products/'+${product.id}+'/enabled/false'}"
+									   title="Disabled"> <span th:if="${product.enabled==true}"
+									   class="badge bg-success" style="color: white;">Enabled</span>
+								</a> <a th:href="@{'/products/'+${product.id}+'/enabled/true'}"
+									title="Enabled"> <span th:if="${product.enabled==false}"
+										class="badge bg-danger" style="color: white;">Disabled</span>
+								</a>
+							</td>
+						</th:block>
+		
+						<td><a class="badge bg-info link-details"
+							th:href="@{'/products/view/'+${product.id}}"
+							title="View Details of this product"><span
+								class="fas fa-eye icon-white"></span></a>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<th:block sec:authorize="hasAnyAuthority('Admin','Editors','Salesperson')"> 
+								<a class="badge bg-warning"
+								   th:href="@{'/products/edit/'+${product.id}}" title="Edit"><span
+								   class="fas fa-edit icon-white"></span></a>
+							</th:block>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							 <th:block sec:authorize="hasAnyAuthority('Admin','Editors')">
+								<a class="badge bg-danger link-delete"
+								   th:href="@{'/products/delete/'+${product.id}}"
+								   th:userId="${product.id}" title="Delete"><span
+								   class="fas fa-trash icon-white"></span></a>
+							</th:block>
+					   </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="text-center" th:if="${totalItems>0}">
+			<span>Showing products # [[${startCount}]] to [[${endCount}]]
+				of [[${totalItems}]]</span>
+		</div>
+		<div class="text-center" th:unless="${totalItems>0}">
+			<span>No products found</span>
+		</div>
+		<div>
+			<nav>
+				<ul class="pagination justify-content-center flex-wrap">
+					<li
+						th:class="${currentPage >1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{/products/page/1}">First</a></li>
+					<li
+						th:class="${currentPage >1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/products/page/'+${currentPage -1}}">Previous</a></li>
+					<li
+						th:class="${currentPage !=i ? 'page-item' : 'page-item active'}"
+						th:each="i : ${#numbers.sequence(1,totalPages)}"><a
+						class="page-link" th:href="@{'/products/page/'+${i}}">[[${i}]]</a>
+					</li>
+					<li
+						th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/products/page/'+${currentPage +1}}">Next</a></li>
+					<li
+						th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/products/page/'+${totalPages}}">Last</a></li>
+				</ul>
+			</nav>
+		</div>
+		<div class="modal fade text-center" id="confirmDialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Delete Confirmation</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<span id="modalBody"></span>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" href="" id="yesButton">Yes</a>
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="detailModal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content"></div>
+			</div>
+		</div>
+		<div th:replace="fragments :: footer"></div>
+	</div>
+	<script type="text/javascript">
+		ModalUrl = "[[@{/products}]]";
+		$(document).ready(
+				function() {
+					$(".link-details").on(
+							"click",
+							function(e) {
+								e.preventDefault();
+								link = $(this).attr("href");
+								$("#detailModal").modal("show").find(
+										".modal-content").load(link);
+							});
+				});
+	</script>
+</body>
+</html>

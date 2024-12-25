@@ -1,0 +1,26 @@
+<Employee
+List<String> listName=listEmployee.stream().filter(x-> {
+if(x.getLocation().equals("Mumbai")){
+x.getName()
+}
+).collect(Collectors.toList());
+for(String s:listName){
+System.out.println(s)
+}
+
+
+public class SingletonClass{
+
+private SingletonClass getinstence=null;
+
+private SingletonClass(){
+}
+
+public SingletonClass getObjects(){
+if(getinstence==null){
+  getinstence=new SingletonClass();
+}
+return getinstence;
+}
+List<Integer> lst=Arrays.asList(1,4,10,9,2,3);
+Arrays.sort(lst);

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head('Login | Shopme','none')" />
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		<div class="text-center">
+			<h1>Customer Login</h1>
+		</div>
+		<div class="text-center">
+		<a class="btn btn-lg btn-secondary fab fa-google" th:href="@{/oauth2/authorization/google}"> continue with Google</a>
+		</div>
+		<div>&nbsp;&nbsp;</div>
+		<div class="text-center">
+		<a class="btn btn-lg btn-secondary fab fa-facebook" th:href="@{/oauth2/authorization/facebook}"> continue with Facebook</a>
+		</div>
+		<form th:action="@{/login}" method="post" style="max-width: 350px;margin: 0 auto;" class="text-center mt-4 mb-4">
+			<div th:if="${param.error}">
+			   <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+			</div>
+			<div th:if="${param.logout}">
+			   <p class="text-warning">you have been logged out.</p>
+			</div>
+			
+			<div class="border border-secondary rounded p-3">
+				<p>
+					<input type="email" id="email" name="email" class="form-control"
+						placeholder="E-mail" required="required" />
+				</p>
+				<p>
+					<input type="password" id="password" name="password"
+						class="form-control" placeholder="Password" required="required" />
+				</p>
+				<p>
+				<input type="checkbox" name="remember-me"/>&nbsp;Remember Me
+				</p>
+				<p>
+					<input type="submit" value="login" class="btn btn-primary">
+				</p>
+			</div>
+			<div>&nbsp;</div>
+			<div>or <a th:href="@{/forgot_password}"><b>Forgot Password</b></a></div>
+			<div>Don't have an account? <a th:href="@{/register}"><b>Sign Up</b></a></div>
+			<div>&nbsp;</div>	
+		</form>
+		
+		<div th:replace="navigation :: footer_menu"></div>
+	</div>
+
+</body>
+</html>

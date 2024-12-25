@@ -1,0 +1,35 @@
+Hibernate: create sequence hibernate_sequence start with 1 increment by 1
+Hibernate: create table building (id bigint not null, primary key (id))
+Hibernate: create table floor (id bigint not null, enabled boolean not null, floor_name varchar(255), building_id bigint, primary key (id))
+Hibernate: create table section (id bigint not null, enabled boolean not null, section_name varchar(255), floor_id bigint, primary key (id))
+Hibernate: create table slot (id bigint not null, available boolean not null, charging_point_status boolean not null, priority integer, slot_name varchar(255), slot_type varchar(255), section_id bigint, primary key (id))
+Hibernate: create table users (id bigint not null, email varchar(255), mobile_number varchar(255), user_name varchar(255), primary key (id))
+Hibernate: alter table floor add constraint FKfvb11l7lpgqc6qdrg3bm24kr3 foreign key (building_id) references building
+Hibernate: alter table section add constraint FK51km5a4x21rvsg83q1ptuow61 foreign key (floor_id) references floor
+Hibernate: alter table slot add constraint FKq0425pyctwo13xnua3a6yd7ei foreign key (section_id) references section
+
+http://localhost:8082/h2-console
+
+
+[13:19] Nagaraj (Laptop 1) (Guest)
+    
+
+	
+REQUIREMENT 1 : Create a Ticket component with following as requirements :
+	
+1.a. Always displays Ticket entry page that displays Ticket Id, Vehicle Number, allows user to input Parking Duration & Charging Duration and and displays amount to be paid.
+	
+1.b. Provide a button to toggle "show / hide details", which displays or hides Vehicle type, Slot ID.
+	
+1.c  Parking Charges for Electrical Vehicle is INR 10 per minute.  For Regular Vehicle is INR 15 per minute.
+	
+1.d Electric Charging fee is INR 30 per minute if the Charging duration is less than 15 minutes, otherwise INR 25 per minute.  Charging fee is applicable to only to vehicle of type Electric
+	
+REQUIREMENT 2 : Display list of Slots with their availability status, usage status and slot type.
+
+
+
+
+Video - Java fullstack training 8th July 2022 part 1 | Tech Mahindra
+
+https://mytube.techmahindra.com/web/videos/gcc-f1bd6a34-252b-4518-a7c4-e8adb6c874bd?list=my

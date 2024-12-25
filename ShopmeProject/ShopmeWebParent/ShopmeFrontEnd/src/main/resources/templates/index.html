@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="fragments :: page_head('Home | Shopme','none')" />
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		<div th:replace="navigation :: auth_customer_menu"></div>
+		<div>
+			<h1>Shopping by Categories</h1>
+		</div>
+		<div class="row">
+			<div class="col" th:each="cat :${listCategories}">
+				<div class="m-4">
+					<img th:src="@{${cat.imagesPath}}" style="height:70px;width:70px;border-radius: 10%">
+				</div>
+				<div class="m-4">
+					<a class="btn btn-link" th:href="@{'/c/'+${cat.alias}}">[[${cat.name}]]</a>
+				</div>
+			</div>
+		</div>
+		<div th:replace="navigation :: footer_menu"></div>
+	</div>
+
+</body>
+</html>

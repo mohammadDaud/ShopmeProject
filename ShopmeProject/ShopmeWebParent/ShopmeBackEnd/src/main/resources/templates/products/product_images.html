@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="content" th:remove="tag">
+		<div class="row" id="divProductImages">
+			<div class="col border p-2">
+				<div>
+					<label>Main Image : [[${product.mainImage}]]</label>
+				</div>
+				<div>
+					<img id="thumbnail" alt="Main Image Preview" class="img-fluid"
+						th:src="@{${product.mainImagePath}}" />
+				</div>
+				<div>
+					<input type="file" id="fileImage" name="fileImage"
+						th:required="${product.mainImage==null}"
+						accept="image/png,image/jpeg" />
+				</div>
+				<input type="hidden" th:field="*{mainImage}" />
+			</div>
+			<th:block th:each="productImage,status : ${product.images}">
+				<div class="col border p-2" th:id="'divExtraImage'+${status.index}">
+					<div>
+						<label>Extra Image #[[${status.index +1}]] :
+							[[${productImage.name}]]</label> <a name="removeExtraImageLink"
+							class="btn fas fa-times-circle icon-dark float-right"
+							title="remove this image"></a>
+					</div>
+					<div>
+						<img th:id="'extraThumbnail'+${status.index}"
+							th:alt="'Extra Image #'+${status.index}+' Preview'"
+							class="img-fluid" th:src="@{${productImage.imagePath}}" />
+					</div>
+					<div>
+						<input type="file" name="extraImage" accept="image/png,image/jpeg" />
+					</div>
+					<input type="hidden" name="imageIDs" th:value="${productImage.id}"
+						th:id="'imageId'+${status.index}">
+						<input type="hidden" name="imageNames" th:value="${productImage.name}"
+						th:id="'imageName'+${status.index}">
+				</div>
+			</th:block>
+			<div class="col border p-2"
+				th:id="'divExtraImage'+${numberOfExtraImage}">
+				<div th:id="'extraImageHeader'+${numberOfExtraImage}">
+					<label>Extra Image #[[${numberOfExtraImage +1 }]]</label>
+				</div>
+				<div>
+					<img th:id="'extraThumbnail'+${numberOfExtraImage}"
+						th:alt="'Extra Image #'+${numberOfExtraImage}+' Preview'"
+						class="img-fluid" th:src="@{/images/default_user.png}" />
+				</div>
+				<div>
+					<input type="file" name="extraImage" accept="image/png,image/jpeg" />
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>

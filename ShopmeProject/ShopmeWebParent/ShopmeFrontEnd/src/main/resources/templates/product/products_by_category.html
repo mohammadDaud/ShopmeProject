@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: page_head(${pageTitle},'none')" />
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: header_menu"></div>
+		<div th:replace="breadcrum :: content"></div>
+		
+		<div class="row text-center">
+			<th:block th:each="cat : ${category.children}">
+				<div class="col" th:if="${cat.enabled==true}">
+				     <div>
+				     <a th:href="@{'/c/'+${cat.alias}}">
+				      <img th:src="@{${cat.imagesPath}}" style="height:100px;width:100px;border-radius: 10%">
+				      <br>
+				      <b>[[${cat.name}]]</b>
+				      </a>
+				   </div>
+				</div>
+			</th:block>
+		</div>
+
+		<div class="row">
+			<th:block th:each="product : ${listProducts}">
+				<div class="col">
+				   <div>
+				      <a th:href="@{'/p/' + ${product.alias}}">
+					      <img th:src="@{${product.mainImagePath}}" style="height:100px;width:100px;border-radius: 10%">
+					      <br>
+					      <b>[[${product.shortName}]]</b>
+				      </a>
+				   </div>
+				   <div th:if="${product.discountPercent <= 0}">
+				   <span><b>&#8377;</b> [[${#numbers.formatDecimal(product.price,1,THOUSANDS_POINT_TYPE,DECIMAL_DIGITS,DECIMAL_POINT_TYPE)}]]</span>
+				   </div>
+				   <div th:if="${product.discountPercent > 0}">
+				   <span style="font-size: larger;color:darkred"><b>&#8377;</b>[[${#numbers.formatDecimal(product.discountPrice,1,THOUSANDS_POINT_TYPE,DECIMAL_DIGITS,DECIMAL_POINT_TYPE)}]]</span>
+				    <del><span>&#8377; [[${#numbers.formatDecimal(product.price,1,THOUSANDS_POINT_TYPE,DECIMAL_DIGITS,DECIMAL_POINT_TYPE)}]]</span></del>
+				   </div>
+				</div>
+			</th:block>
+		</div>
+		
+		<div class="text-center mt-4" th:if="${totalItems>0}">
+			<span>Showing products # [[${startCount}]] to [[${endCount}]]
+				of [[${totalItems}]]</span>
+		</div>
+		<div class="text-center" th:unless="${totalItems>0}">
+			<span>No products found</span>
+		</div>
+		<div>
+			<nav>
+				<ul class="pagination justify-content-center flex-wrap">
+					<li
+						th:class="${currentPage >1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/c/'+${category.alias}+'/page/1'}">First</a></li>
+					<li
+						th:class="${currentPage >1 ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/c/'+${category.alias}+'/page/'+${currentPage -1}}">Previous</a></li>
+					<li
+						th:class="${currentPage !=i ? 'page-item' : 'page-item active'}"
+						th:each="i : ${#numbers.sequence(1,totalPages)}"><a th:if="${i!=0}"
+						class="page-link" th:href="@{'/c/'+${category.alias}+'/page/'+${i}}">[[${i}]]</a>
+					</li>
+					<li
+						th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/c/'+${category.alias}+'/page/'+${currentPage +1}}">Next</a></li>
+					<li
+						th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}"><a
+						class="page-link" th:href="@{'/c/'+${category.alias}+'/page/'+${totalPages}}">Last</a></li>
+				</ul>
+			</nav>
+		</div>
+
+		<div th:replace="navigation :: footer_menu"></div>
+	</div>
+
+</body>
+</html>

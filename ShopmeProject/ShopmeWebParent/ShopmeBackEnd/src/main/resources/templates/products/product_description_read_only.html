@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<body>
+	<div th:fragment="content" th:remove="tag">
+		<div class="m-2">
+			<label class="col-sm-2 col-form-label">Short Description</label>
+			<div class="col-sm-10">
+				<div class="border m-2 p-2" th:utext="${product.shortDescription}"></div>
+			</div>
+		</div>
+
+		<div class="m-2">
+			<label class="col-sm-2 col-form-label">Full Description</label>
+			<div class="col-sm-10">
+				<div class="border m-2 p-2" th:utext="${product.fullDescription}"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,101 @@
+Use Functional Interfaces and Streams to implement following :
+    1. Generate id for Floor, Section, Slot, Vehicle and Customer using generic Id generator
+    2. Generate vehicle number of Vehicle using random generator with any 2 character state code in upprecase as prefix. Validate Vehicle number to confirm the format.
+    3. Calculate total amount collected for each floor.
+    4. Calculate total amount collected by Electric Charging and without electric charging.
+    5. Count number of slots available in each floor.
+    6. Display list of top 2 customers in the order of amount paid.
+	
+	
+	1. Modify Parking lot solution to use tables in local database instead of Map for Master data.  If possible, for transaction data like Customer, Ticket etc.
+2. Implement Functionality in admin to perform the following :
+    2.a. Insert a record of customer in Customer table whenever a new customer gets registered.
+    2.b. Admin should be able to change Customer's mobile number in the Customer table.
+    2.c. Disable or enable slot by updating the slot's record in the Slot table.
+    2.d. Whenever a customer deregisters, Admin should be able to delete a Customer from Customer table.
+	
+	
+	
+
+1. Create login.html to display a form for user to enter username, password and button to submit the form.
+
+2. Specify /login as action in the form and use post method.
+
+3. Implement AuthenticationServlet (mapped to url pattern / login) to validate the credentials provided, initialize the session with expiry time of 5 minutes and add full name of the user as session attribute. Valid user names would be admin, test, user1, user2 with the full names as "Administration", "Test User", "User 1", "User 2" respectively.
+
+4. If the credentials are valid, Display Welcome page with a greeting message including full name of the logged in user and link to Logout page.
+
+5. On click of Logout link in Welcome page, invalidate the session.
+
+6. If user tries to access Authentication or Welcome page without a valid session, display a message with link to login.html in response.
+
+
+1. Create a login.jsp which will allow user to login with the credentials available in users table.
+2. If the user is invalid display error meesage in login.jsp
+3. Create a logout.jsp to invalidate session and show link to login page.
+4. Create an authentication filter to validate the user credentials against Users table in database.
+5. Create an Auhorization filter which will validate the user request for /admin/user.jsp and allow only if user has role admin.
+6. Create a page to display menu containing links to view Floors Page, Sections Page and Slots Page.  These pages should be accessible by users of role admin and user.
+7. Create JSP for displaying list of Floors in browser.
+8. Create JSP for displaying list of Sections in browser.
+9. Create JSP for displaying list of Slots in browser.
+
+
+
+1. Modify JDBC based Parking lot solution to use Hibernate to local database instead of JDBC.
+2. Implement following Functionality in admin to perform the following using Hibernate :
+    2.a. Insert a record of customer in Customer table whenever a new customer gets registered.
+    2.b. Admin should be able to change Customer's mobile number in the Customer table.
+    2.c. Disable or enable slot by updating the slot's record in the Slot table.
+    2.d. Whenever a customer deregisters, Admin should be able to delete a Customer from Customer table.
+    2.e. Insert master data for Floor, Section and Slots with top to bottom (one to many) association.
+    2.f. Create a many to many association between Customers and Vehicles.
+3. Fetch data using HQL for the following requirements :
+    3.a. Show all the slots available in a floor.
+    3.b. Display all the customers who paid more than INR 1000 as ticket payments.
+    3.c. Show details of a specific Ticket including Vehicle and Slot details.
+
+	
+	Create Simple Maven project
+	
+copy the source code and configuration from hibernate lab exercise to the new project
+	
+Add Hibernate and jdbc driver dependencies
+	
+build test cases and execute only test cases
+	
+build an executable jar and execute jar
+
+
+
+
+
+
+Lab exercises ae 
+1) Implement Inheritance strategy for persisting Floors, Slots and Section.  
+2) Implemant Many to Many between Customer and Vehicle.
+
+Lab exercise for 11am to 1pm is to create Customer Form with Server Side validation and display list of Customers.
+
+
+Lab Exercise 01 june 2022
+
+    1) Create a custom exception to avid duplicate customer names.
+    2) Implement global error page and exception handler.
+    3) Implement Logout
+    4) Redirect user to root (login) page if the user details are not available in session while accessing a page
+    3 & 4 would require adding Security starter to POM
+    As a week end lab exercise, replace servlets, jsp and Filters code in Parking lot solution with with Spring MVC, Server side validation, Spring Security, and MVC Interceptors.  If possible, add bootstrap to the UI.
+
+Lab exercise for 2:20pm to 4:30pm is : 
+1) Create Customer API to get customer details as JSON for a specific customer 
+getCustomer(String custId), with url mapping as "/api/customer".
+2) Create Customer API with url "/api/customer/create/" to insert a new Customer record into customer table with the details of customer provided in request payload.
+3) "/api/customer/create" should be accessible only by users with ADMIN Role.
+4) "/api/customer" should be accessible by an authenticated user.
+
+
+
+
+
+

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<head
+	th:replace="fragments :: page_head('Product | Shopme Admin','tag')" />
+<link rel="stylesheet" th:href="@{/richtext/richtext.min.css}" />
+<script th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<div th:replace="navigation :: menu"></div>
+		<div class="text-center">
+			<h2>[[${pageTitle}]]</h2>
+		</div>
+		<form th:action="@{/products/saveproduct}" method="post"
+			style="max-width: 1200px; margin: 0 auto;" th:object="${product}"
+			enctype="multipart/form-data"
+			onsubmit="return checkNameUnique(this);">
+			<div>
+				<input type="hidden" th:field="*{id}"> <input
+					th:if="${product.category !=null}" type="hidden" id="categoryId"
+					th:value="${product.category.id}">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item"><a class="nav-link active"
+						data-toggle="tab" href="#overview" role="tab">Overview</a></li>
+					<li class="nav-item"><a class="nav-link" data-toggle="tab"
+						href="#description" role="tab">Description</a></li>
+					<li class="nav-item"><a class="nav-link" data-toggle="tab"
+						href="#images" role="tab">Images</a></li>
+					<li class="nav-item"><a class="nav-link" data-toggle="tab"
+						href="#details" role="tab">Details</a></li>
+					<li class="nav-item"><a class="nav-link" data-toggle="tab"
+						href="#shipping" role="tab">Shipping</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active p-3" id="overview" role="tabpanel">
+						<div th:replace="products/product_overview :: content"></div>
+					</div>
+					<div class="tab-pane p-3" id="description" role="tabpanel">
+						<th:block th:if="${!#authorization.expression('hasAuthority(''Admin'')') && !#authorization.expression('hasAuthority(''Editors'')')}">
+							<th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
+								<div th:replace="products/product_description_read_only :: content"></div>
+							</th:block>
+						</th:block>
+						<th:block th:if="${#authorization.expression('hasAuthority(''Admin'')') || #authorization.expression('hasAuthority(''Editors'')')}">
+							<div th:replace="products/product_description :: content"></div>
+						</th:block>
+					</div>
+					<div class="tab-pane p-3" id="images" role="tabpanel">
+						<th:block th:if="${#authorization.expression('hasAuthority(''Admin'')') || #authorization.expression('hasAuthority(''Editors'')')}">
+							<div th:replace="products/product_images :: content"></div>
+						</th:block>
+						<th:block th:if="${!#authorization.expression('hasAuthority(''Admin'')') && !#authorization.expression('hasAuthority(''Editors'')')}">
+							<th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
+								<div th:replace="products/product_images_read_only :: content"></div>
+							</th:block>
+						</th:block>
+					</div>
+					<div class="tab-pane p-3" id="details" role="tabpanel">
+						<th:block th:if="${#authorization.expression('hasAuthority(''Admin'')') || #authorization.expression('hasAuthority(''Editors'')')}">
+							<div th:replace="products/product_details :: content"></div>
+							<div class="m-3">
+								<input type="button" class="btn btn-secondary" value="add more details" onclick="addNextDetailSection()" />
+							</div>
+						</th:block>
+						<th:block th:if="${!#authorization.expression('hasAuthority(''Admin'')') && !#authorization.expression('hasAuthority(''Editors'')')}">
+							<th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
+								<div th:replace="products/product_details_read_only :: content"></div>
+							</th:block>
+						</th:block>
+					</div>
+					<div class="tab-pane p-3" id="shipping" role="tabpanel">
+						<th:block th:if="${#authorization.expression('hasAuthority(''Admin'')') || #authorization.expression('hasAuthority(''Editors'')')}">
+							<div th:replace="products/product_shipping :: content"></div>
+						</th:block>
+						<th:block th:if="${!#authorization.expression('hasAuthority(''Admin'')') && !#authorization.expression('hasAuthority(''Editors'')')}">
+							<th:block th:if="${#authorization.expression('hasAuthority(''Salesperson'')')}">
+							    <div th:replace="products/product_shipper_read_only :: content"></div>
+						    </th:block>
+						</th:block>
+					</div>
+				</div>
+			</div>
+			<div class="text-center">
+				<input type="submit" value="save" class="btn btn-primary m-3">
+				<input type="button" value="cancel" class="btn btn-secondary"
+					id="btnCancel">
+			</div>
+		</form>
+		<div th:replace="modal_fragments :: modal_dialogs"></div>
+		<div th:replace="fragments :: footer"></div>
+	</div>
+	<script type="text/javascript">
+		ModalUrl = "[[@{/products/check_unique}]]";
+		BrandUrl = "[[@{/brands}]]";
+		extraDefaultThumbnail="[[@{/images/default_user.png}]]";
+		var extraImageCount=0;
+		dropdownBrand=$("#brand");
+		dropdownCategory=$("#category");
+		$(document).ready(function(){
+			$("#shortDescription").richText();
+			$("#fullDescription").richText();
+			dropdownBrand.change(function(){
+				dropdownCategory.empty();
+				getCategories();
+			});
+			getCategoryInNewMode();
+			
+			$("#fileImage").change(function() {
+				if(!checkFileSize(this)){ return; }
+				showImageThumbnail(this);
+			});
+			$("input[name='extraImage']").each(function(index){
+					extraImageCount++;
+				$(this).change(function(){
+					if(!checkFileSize(this)){ return; }
+					showExtraImageThumbnail(this,index);
+				});
+			});
+			$("a[name='removeExtraImageLink']").each(function(index){
+				$(this).click(function(){
+					removeExtraImage(index);
+				});
+			});
+			$("a[name='linkRemoveDetails']").each(function(index){
+				$(this).click(function(){
+					removeDetailsByIndex(index);
+				});
+			});
+		});
+		function getCategoryInNewMode(){
+			cateId=$("#categoryId");
+			editMode=false;
+			if(cateId.length){
+				editMode=true;
+			}
+			if(!editMode) getCategories();
+		};
+		function checkFileSize(fileInput) {
+			fileSize = fileInput.files[0].size;
+			if (fileSize > 548576) {
+				fileInput.setCustomValidity("you must choose image less than 500 KB")
+				fileInput.reportValidity();
+				return false;
+			} else {
+				fileInput.setCustomValidity("");
+				return true;
+			}
+		}
+		function showExtraImageThumbnail(fileInput ,index) {
+			var file = fileInput.files[0];
+			fileName=file.name;
+			imageHiddenField=$("#imageName"+index);
+			if(imageHiddenField.length){
+				imageHiddenField.val(fileName);
+			}
+			var reader = new FileReader();
+			reader.onload = function(e) { $("#extraThumbnail"+index).attr("src", e.target.result); };
+			reader.readAsDataURL(file);
+			if(index >= extraImageCount-1){
+			  addExtraImageSection(index+1);	
+			}
+		};
+		function addExtraImageSection(index){
+			htmlExtraImage =`
+				<div class="col border p-2" id="divExtraImage${index}">
+				<div id="extraImageHeader${index}">
+					<label>Extra Image #${index+1}</label>
+				</div>
+				<div>
+					<img id="extraThumbnail${index}" alt="Extra Image #${index+1} Preview" class="img-fluid"
+						src="${extraDefaultThumbnail}" />
+				</div>
+				<div>
+				<input type="file" name="extraImage" onchange="showExtraImageThumbnail(this,${index})" accept="image/png,image/jpeg"/>
+				</div>
+			</div>
+			`;
+			htmlLinkRemove=`<a class="btn fas fa-times-circle icon-dark float-right" href="javascript:removeExtraImage(${index-1})" title="remove this image"></a>`;
+			$("#divProductImages").append(htmlExtraImage);
+			$("#extraImageHeader"+(index-1)).append(htmlLinkRemove);
+			extraImageCount++;
+		}
+		function removeExtraImage(index){
+			$("#divExtraImage"+index).remove();
+		}
+		function showImageThumbnail(fileInput) {
+			var file = fileInput.files[0];
+			var reader = new FileReader();
+			reader.onload = function(e) { $("#thumbnail").attr("src", e.target.result); };
+			reader.readAsDataURL(file);
+		};
+		
+		function getCategories(){
+			brandId = dropdownBrand.val();
+			url = BrandUrl+"/"+brandId+"/categories";
+			$.get(url,function(responseJson){
+				$.each(responseJson,function(index,category){
+					$("<option>").val(category.id).text(category.name).appendTo(dropdownCategory);
+				});
+			});
+		}
+		
+		function checkNameUnique(form) {
+			productId = $("#id").val();
+			productName = $("#name").val();
+			csrfValue = $("input[name='_csrf']").val();
+			url = ModalUrl;
+			param = {
+				id : productId,
+				name : productName,
+				_csrf : csrfValue
+			};
+			$.post( url,
+					param,
+					function(response) {
+								if (response == "OK") {
+									form.submit();
+								} else if (response == "DuplicateName") {
+									showWarningModal("there is another product having same name."
+											+ productName);
+								} else {
+									showErrorModal("Unknown response from the server.");
+								}
+							}).fail(function() {
+						showErrorModal("could not connect to the server.");
+					});
+			return false;
+		}
+
+		function showModal(title, message) {
+			$("#modalTitle").text(title);
+			$("#modalBody").text(message);
+			$("#modalDialog").modal();
+		}
+		function showErrorModal(message) {
+			showModal("Error", message);
+		}
+		function showWarningModal(message) {
+			showModal("Warning", message);
+		}
+		
+		function addNextDetailSection(){
+			allDivDetails=$("[id^='divDetail']");
+			divDetailCount =allDivDetails.length;
+			htmlProductDetails=`
+				<div class="form-inline" id="divDetail${divDetailCount}">
+				<input type="hidden" name="detailIDs" value="0">
+				<label class="m-3">Name</label> <input type="text"
+					class="form-control w-25" name="detailNames" maxlength="255">
+				<label class="m-3">Value</label> <input type="text"
+					class="form-control w-25" name="detailValues" maxlength="255">
+			</div>
+			`;
+			$("#divProductDetails").append(htmlProductDetails);
+			previousDivDetailSection = allDivDetails.last();
+			previousDivDetailID=previousDivDetailSection.attr("id");
+			deleteBtn=`
+				<a class="btn fas fa-times-circle icon-dark" 
+				href="javascript:removeDivDetailsSectionById('${previousDivDetailID}')" 
+				title="remove this details"></a>
+			`;
+			previousDivDetailSection.append(deleteBtn);
+			$("input[name='detailNames']").last().focus();
+	    }
+		function removeDivDetailsSectionById(id){
+			$("#"+id).remove();
+		}
+		function removeDetailsByIndex(index){
+			$("#divDetail"+index).remove();
+		}
+	</script>
+</body>
+</html>
